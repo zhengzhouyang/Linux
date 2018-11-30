@@ -1,0 +1,141 @@
+# 此例中用nginx为例子
+
+# 启动进程， 启动进程的最简单方法是在命令行中键入其名称，然后按回车键
+
+	#启动nginx
+		alan@workstation:~$ nginx
+		
+	#查看版本
+		alan@workstation:~$ nginx -v
+		nginx version: nginx/1.14.0
+
+# 查看您的可执行路径
+
+	alan@workstation:~$ echo $PATH
+	/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+
+# 使用 which 命令查看可执行文件的完整路径
+
+	alan@workstation:~$ which nginx
+	/opt/nginx/bin/nginx
+	
+# 如果执行 which nginx 的命令什么也不返回，那么是找不到 Nginx 了，因为它只搜索您指定的可执行路径。
+
+	# 启动方法一 输入完全路径
+		alan@workstation:~$ /home/alan/web/prod/nginx/sbin/nginx -v
+		nginx version: nginx/1.14.0
+		
+	# 启动方法二 将应用程序安装在可执行文件路径中的目录中。然而，这有时可能是办不到的，特别是如果您没有 root 权限。
+	
+	# 启动方法三 更新您的可执行路径环境变量
+		PATH="$HOME/web/prod/nginx/sbin:$PATH"
+		
+		alan@workstation:~$ echo $PATH
+		/home/alan/web/prod/nginx/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+		
+		alan@workstation:~$ which nginx
+		/home/alan/web/prod/nginx/sbin/nginx
+		
+# 保持进程运行
+
+	# 注销或关闭终端时，进程可能不会继续运行。这种特殊情况可以通过在要使用 nohup 命令放在要运行的命令前面让进程持续运行。
+	# 此外，附加一个& 符号将会把进程发送到后台，并允许您继续使用终端。
+	
+		nohup myprogram.sh &
+	
+		nohup 会返回运行进程的 PID。接下来我会更多地谈论 PID。
+		
+# 管理正在运行的进程
+
+	# ps 给我展示每一个正在运行的进程（-e）和完整的列表（-f）
+	
+	root@kali:~# ps -ef
+	UID        PID  PPID  C STIME TTY          TIME CMD
+	root         1     0  0 Nov29 ?        00:00:05 /sbin/init
+	root         2     0  0 Nov29 ?        00:00:00 [kthreadd]
+	root         3     2  0 Nov29 ?        00:00:00 [rcu_gp]
+	...
+	
+	#从上述结果中抓出某一项特定的服务
+	
+	ps -ef | grep "service names"
+	
+	# pgrep 命令更加简化单独调用 grep 遇到的问题
+	
+		alan@workstation:~$ pgrep nginx
+		20520
+		20521
+		
+	# 假设您在一个托管环境中，多个用户正在运行几个不同的 Nginx 实例。您可以使用 -u 选项将其他人排除在输出之外。
+	
+		alan@workstation:~$ pgrep -u alan nginx
+		20520
+		20521
+		
+	# 另一个好用的是 pidof。此命令将检查特定二进制文件的 PID，即使另一个同名进程正在运行。
+	
+	# 例如，有两个不同目录的nginx分别启动了服务，pgrep无法区别启动的目录
+	
+		alan@workstation:~$ pgrep nginx
+		20881
+		20882
+		20895
+		20896
+	
+	# pidof 命令可用于确定每个特定 Nginx 实例的 PID。
+	
+		alan@workstation:~$ pidof /home/alan/web/prod/nginxsec/sbin/nginx
+		20882 20881
+		 
+		alan@workstation:~$ pidof /home/alan/web/prod/nginx/sbin/nginx
+		20896 20895
+
+# top 命令已经有很久的历史了，对于查看运行进程的细节和快速识别内存消耗等问题是非常有用的。
+
+	top - 14:47:44 up 23:16,  2 users,  load average: 0.00, 0.00, 0.00
+	Tasks: 198 total,   1 running, 197 sleeping,   0 stopped,   0 zombie
+	%Cpu(s):  1.0 us,  0.2 sy,  0.0 ni, 98.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+	MiB Mem :   1991.6 total,    221.9 free,    913.8 used,    855.8 buff/cache
+	MiB Swap:   2045.0 total,   2042.5 free,      2.5 used.    882.3 avail Mem
+
+	  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+	  960 root      20   0 3593412 258452  82636 S   3.3  12.7   2:47.49 gnome-she+
+	  726 Debian-+  20   0  559156  39276  19080 S   0.7   1.9   4:58.28 gsd-color
+	 1090 root      20   0  559252  39760  19516 S   0.7   1.9   4:57.44 gsd-color
+	 .....
+	 
+# 为了更容易监控我们的示例 Nginx 进程，我们可以使用 -p 选项并传递 PID 来调用 top
+
+		top -p{PID} -p{PID}  ....
+
+# kill, 如果可以用服务自带的stop shell来终止服务，就不要用kill来终止
+
+		alan@workstation:~$ kill -9 20896
+ 
+		alan@workstation:~$ pgrep nginx
+		20881
+		20882
+		20895
+		22123
+
+# 命令 pkill 类似于 pgrep，因为它可以按名称搜索。这意味着在使用 pkill 时必须非常小心。
+# 在我的 Nginx 示例中，如果我只想杀死一个 Nginx 实例，我可能不会选择使用它。
+
+		/home/alan/web/prod/nginx/sbin/nginx -s stop
+		/home/alan/web/prod/nginxsec/sbin/nginx -s stop
+		
+# 如果我想使用 pkill，我可以包括 -f 选项，让 pkill 过滤整个命令行参数。这当然也适用于 pgrep。
+# 所以，在执行 pkill -f 之前，首先我可以用 pgrep -a 确认一下。
+
+		alan@workstation:~$ pgrep -a nginx
+		20881 nginx: master process ./nginx -p /home/alan/web/prod/nginxsec
+		20882 nginx: worker process
+		20895 nginx: master process nginx
+		20896 nginx: worker process
+		
+# 我也可以用 pgrep -f 缩小我的结果。pkill 使用相同参数会停止该进程
+
+		alan@workstation:~$ pgrep -f nginxsec
+		20881
+												   
+		alan@workstation:~$ pkill -f nginxsec

@@ -1,0 +1,19 @@
+# Whereis locate the binary, source, and manual page files for a command
+	root@kali:~# whereis ls
+	ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz
+	
+# which - locate a command
+	root@kali:~# which ls
+	/usr/bin/ls
+
+# locate - find files by name
+	root@kali:/tmp# locate test.txt
+	/usr/lib/python3/dist-packages/Cryptodome/SelfTest/Hash/test_vectors/BLAKE2b/blake2b-test.txt
+	/usr/lib/python3/dist-packages/Cryptodome/SelfTest/Hash/test_vectors/BLAKE2s/blake2s-test.txt
+	/usr/share/doc/screen/terminfo/test.txt.gz
+	/usr/share/sslyze/test/https_test.txt
+	/usr/share/sslyze/test/smtp_test.txt
+	/usr/share/sslyze/test/starttls_test.txt
+	/usr/share/sslyze/test/xmpp_test.txt
+	/usr/share/wfuzz/wordlist/general/test.txt
+

@@ -1,0 +1,6 @@
+# show the default setting for a new user
+	useradd -D
+	
+# comment on a new user and create a home directory for it
+
+	useradd -c "test test" -m test

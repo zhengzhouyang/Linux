@@ -1,0 +1,10 @@
+# unzip file.tar.gz
+
+	# d stands for decompress
+	gzip -d file.tar.gz
+	
+	# then use tar 
+	tar xvf file.tar
+	
+	# or directly use tar command 
+	tar zxvf file.tar.gz

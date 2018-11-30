@@ -1,0 +1,15 @@
+# apt-get usage
+	
+	# update the local database or repository
+	apt-get update
+	
+	# upgrade the all the software
+	apt-get upgrade
+	
+	# in addition the function of upgrade , also handles the dependencies
+	apt-get dist-upgrade
+	
+	# install and remove the software
+	apt-get install radio
+	apt-get remove radio
+	

@@ -1,0 +1,16 @@
+# head command
+
+	# show top 5 lines of the file
+	head -n 5 file.txt 
+	
+	# show top 50 bytes of the file
+	
+	head -c 50 file.txt
+	
+# tail command
+
+	# show last 5 lines of the file
+	tail -n 5 file.txt
+	
+	# follow the update of the file
+	tail -f file.txt

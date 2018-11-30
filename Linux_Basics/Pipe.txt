@@ -1,0 +1,11 @@
+# how to use pipe
+
+	# sorting the content in the file
+	cat file.txt | sort 
+	
+	# reverse sorting
+	cat file.txt | sort -r
+	
+	# count the word in the file
+	cat file.txt | sort -r | wc -l 
+	
